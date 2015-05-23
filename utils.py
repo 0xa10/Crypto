@@ -1,3 +1,29 @@
+def gcd(a, b):
+    """Calculate the Greatest Common Divisor of a and b.
+
+    Unless b==0, the result will have the same sign as b (so that when
+    b is divided by it, the result comes out positive).
+    """
+    while b:
+        a, b = b, a%b
+    return a
+    
+def egcd(a, b):
+  if a == 0:
+    return (b, 0, 1)
+  else:
+    g, y, x = egcd(b % a, a)
+    return (g, x - (b // a) * y, y)
+
+def inverse_mod(a, m):
+  g, x, y = egcd(a, m)
+  if g != 1:
+    raise Exception('Modular inverse does not exist')
+  else:
+    return x % m
+ 
+
+
 def blockify(data, size=16):
 	return [data[i:i+size] for i in range(0, len(data), size)]
 	
