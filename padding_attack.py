@@ -33,8 +33,27 @@ def padding_attack(oracle, attacked_msg):
 	# start decoding each block, using the IV as the first test bed
 	for prev_block, block in zip(blocks[:-1], blocks[1:]):
 		decoded_block_text = ""
+		pad_start = 1
+		# special case for last block
+		if block is blocks[-1]: 
+			for pad_start in range(len(block), 0, -1):
+				xored_block = "\xAA" * (len(block) - pad_start + 1)
+				xored_block += prev_block[len(xored_block):]
+				
+				assert len(xored_block) == len(block)
+				if (oracle(xored_block + block)):
+					continue
+				else:
+					# found the padding length
+					decoded_block_text = chr(pad_start) * pad_start
+					pad_start += 1
+					break
+			else:
+				print "Could not find the last blocks padding, aborting"
+				pad_start = 1
+						
 		# start decoding from last char, count pad from 1 to 16 (including)
-		for pad in range(1,17):
+		for pad in range(pad_start,len(block)+1):
 			# test all chars
 			print "******************************** " + str(pad) +" *******************************"
 			for c in optimized_chars:

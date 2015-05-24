@@ -1,3 +1,5 @@
+import struct
+
 def gcd(a, b):
     """Calculate the Greatest Common Divisor of a and b.
 
@@ -21,9 +23,48 @@ def inverse_mod(a, m):
     raise Exception('Modular inverse does not exist')
   else:
     return x % m
+
+def power_mod(a, b, mod):
+    # repeating square implementation, actually a bit slower than pythons default
+    exponent = b
+    accumulator = a
+    result = 1
+    i = 0
+    while ((exponent >> i) > 0):
+        if ((exponent >> i) & 1):
+             result = (result * accumulator) % mod
+        accumulator = (accumulator * accumulator) % mod 
+        i += 1
+    return result
+
+
+def leftrotate(word, n, word_size=32):
+	right_side = word >> (word_size-n) & (2**word_size) - 1
+	left_side = word << (n) & (2**word_size) - 1
+	
+	return left_side | right_side
+    
+# Merkle Damgard compliant padding
+def md_pad(message, _CHAR_BIT_SIZE = 8, fake_length = None): 
+    data = message
+    #append the bit '1' to the message i.e. by adding 0x80 if characters are 8 bits. 
+    message_length = 8*len(data)
+    data += chr(1 << (_CHAR_BIT_SIZE - 1))
+    
+    # append 0 <= k < 512 bits '0', thus the resulting message length (in bits)
+    data += "\x00" * ((((448 - ((message_length+8) % 512))) % 512) / _CHAR_BIT_SIZE)
+    
+    # append ml, in a 64-bit big-endian integer. So now the message length is a multiple of 512 bits.
+    if fake_length is not None:
+        data += struct.pack(">Q", fake_length)
+    else:
+        data += struct.pack(">Q", message_length)
+    
+    assert (len(data)*8 % 512 == 0)
+    
+    return data
+         
  
-
-
 def blockify(data, size=16):
 	return [data[i:i+size] for i in range(0, len(data), size)]
 	
