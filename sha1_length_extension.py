@@ -17,11 +17,13 @@ def main():
 		
 	mac_gen = sha1.sha1_secret_prefix_mac(key)
 	msg = """comment1=cooking%20MCs;userdata=foo;comment2=%20like%20a%20pound%20of%20bacon"""
-	mac = mac_gen.tag(msg).hexdigest()
+	mac = mac_gen.tag(msg)
 	wanted_extension = ";admin=true"
 	
+	assert mac_gen.verify(msg, mac)
+	
 	print "The mac for the msg: \n%s\nis:" % (repr(msg),)
-	print "\t%s" % (mac,)
+	print "\t%s" % (mac.hexdigest(),)
 	print "Trying to extend with %s" % (repr(wanted_extension),)
 	print
 	
@@ -35,7 +37,7 @@ def main():
 		
 		# create a new sha1 generator and splice in the original tag
 		fake_tag = sha1.sha1()
-		fake_tag._h0, fake_tag._h1, fake_tag._h2, fake_tag._h3, fake_tag._h4 = struct.unpack(">LLLLL", mac.decode("hex"))   
+		fake_tag._h0, fake_tag._h1, fake_tag._h2, fake_tag._h3, fake_tag._h4 = struct.unpack(">LLLLL", mac.hexdigest().decode("hex"))   
 		
 		# extend the hash by hasing the extension, with a fake length value in the padding
 		# the fake length value should reflect the length of the original block (512 bits) 
