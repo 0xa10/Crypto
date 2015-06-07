@@ -1,5 +1,5 @@
 from utils import *
-import sha1
+import md4
 from mac import secret_prefix_mac
 import random
 import os
@@ -16,16 +16,16 @@ def main():
 	global key_max
 	
 		
-	mac_gen = secret_prefix_mac(key, sha1.sha1)
+	mac_gen = secret_prefix_mac(key, md4.md4)
 	msg = """comment1=cooking%20MCs;userdata=foo;comment2=%20like%20a%20pound%20of%20bacon"""
 	mac = mac_gen.tag(msg)
 	wanted_extension = ";admin=true"
 	
 	assert mac_gen.verify(msg, mac)
 	
-	print "The mac for the msg: \n%s\nis:" % (repr(msg),)
-	print "\t%s" % (mac.hexdigest(),)
-	print "Trying to extend with %s" % (repr(wanted_extension),)
+	print "The mac for the msg: \n%r\nis:" % (msg,)
+	print "\t%r" % (mac.hexdigest(),)
+	print "Trying to extend with %r" % (wanted_extension,)
 	print
 	
 	
@@ -33,18 +33,18 @@ def main():
 	for i in range(key_min, key_max+1):
 		# for each possible key length
 		# generate a valid padding block for the original msg, truncating it to remove the key
-		padded = md_pad(("A"*i) + msg)[i:]
+		padded = md_pad(("A"*i) + msg, little_endian = True)[i:]
 		 
 		
 		# create a new sha1 generator and splice in the original tag
-		fake_tag = sha1.sha1()
-		fake_tag._h0, fake_tag._h1, fake_tag._h2, fake_tag._h3, fake_tag._h4 = struct.unpack(">LLLLL", mac.hexdigest().decode("hex"))   
+		fake_tag = md4.md4()
+		fake_tag._a, fake_tag._b, fake_tag._c, fake_tag._d = struct.unpack("<LLLL", mac.hexdigest().decode("hex"))   
 		
 		# extend the hash by hasing the extension, with a fake length value in the padding
 		# the fake length value should reflect the length of the original block (512 bits) 
 		# plus the length of the extension (in bits)
 		fake_length = (i + len(padded) + len(wanted_extension)) * 8
-		fake_tag._sha1(wanted_extension, fake_length = fake_length)		
+		fake_tag._md4(wanted_extension, fake_length = fake_length)		
 		
 		# attempt to verify it 
 		if mac_gen.verify(padded + wanted_extension, fake_tag):

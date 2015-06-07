@@ -45,7 +45,7 @@ def leftrotate(word, n, word_size=32):
 	return left_side | right_side
     
 # Merkle Damgard compliant padding
-def md_pad(message, _CHAR_BIT_SIZE = 8, fake_length = None): 
+def md_pad(message, _CHAR_BIT_SIZE = 8, fake_length = None, little_endian = False): 
     data = message
     #append the bit '1' to the message i.e. by adding 0x80 if characters are 8 bits. 
     message_length = 8*len(data)
@@ -56,9 +56,9 @@ def md_pad(message, _CHAR_BIT_SIZE = 8, fake_length = None):
     
     # append ml, in a 64-bit big-endian integer. So now the message length is a multiple of 512 bits.
     if fake_length is not None:
-        data += struct.pack(">Q", fake_length)
+        data += struct.pack("%sQ" % ("<" if little_endian else ">",) , fake_length)
     else:
-        data += struct.pack(">Q", message_length)
+        data += struct.pack("%sQ" % ("<" if little_endian else ">",), message_length)
     
     assert (len(data)*8 % 512 == 0)
     

@@ -70,13 +70,5 @@ class sha1():
 	def hexdigest(self):
 		return hex(self.digest())[2:-1].rjust(160/8*2, "0")
 
-class sha1_secret_prefix_mac():
-	def __init__(self, key):
-		self._key = key
-		
-	def tag(self, message):
-		return sha1(self._key + message)
-		
-	def verify(self, message, tag):
-		return tag == self.tag(message)
+
 	
