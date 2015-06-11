@@ -15,7 +15,7 @@
     <InterpreterArguments>
     </InterpreterArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>Hello!</CommandLineArguments>
+    <CommandLineArguments>Hello! 79cdfe7195a507f665045ca45c398afbf6532a</CommandLineArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

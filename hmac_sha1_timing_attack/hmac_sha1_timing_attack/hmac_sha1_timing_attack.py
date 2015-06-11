@@ -4,7 +4,7 @@ import random
 import time, sys
 
 ATTACK_TIMER = 20
-SENSITIVITY = 8
+SENSITIVITY = 10
 PICKUP_THRESHOLD = (ATTACK_TIMER - SENSITIVITY)/1000.0 
 
 def verify_hmac(file, signature):
@@ -32,9 +32,12 @@ def main(argv):
     iterations = 0
     target_msg = "Hello!"
     signature = ""
+    hint_len = 0
     if len(argv) > 1:
         target_msg = argv[1]
     if len(argv) > 2:
+        hint_len = (len(argv[2]) / 2)
+        assert hint_len < 20
         print "Using hint %s" % (argv[2],)
         signature = argv[2].decode("hex")        
 
@@ -75,7 +78,7 @@ def main(argv):
     assert verify_hmac(target_msg, signature.encode("hex"))
     print "Managed to verify msg %r" % (target_msg,)
     print "SHA1-HMAC: %s" % (signature.encode("hex"),)
-    print "Took %d iterations (avg. %d per byte, %d%% efficiency)" % (iterations, iterations / 20, iterations / (20 / 128 * 100.0))
+    print "Took %d iterations (avg. %d per byte" % (iterations, iterations / (20 - hint_len))
 
     return
 
