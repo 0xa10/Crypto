@@ -69,7 +69,7 @@ def main():
 
     # g = p - 1
     # If the exponent is even the result will be 1, if odd, it will be (p-1)
-    # for that reason, in any combination of results, the final session key will always be 1
+    # for that reason, in any combination of results, the final session key will always be either 1 or p-1 (only if both a & b turned out odd thus g^a == g^b == p-1 == g^ab)
     message = "ZXZlbiBvciBvZGQ/".decode("base64")
 
     alice = DiffieHellman(NIST_PRIME-1 , NIST_PRIME)
