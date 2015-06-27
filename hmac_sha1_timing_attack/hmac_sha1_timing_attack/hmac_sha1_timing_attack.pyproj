@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6b652b38-30e4-4bc7-98e2-418103581dfe</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>hmac_sha1_timing_attack.py</StartupFile>
+    <StartupFile>hmac_sha1_timing_attack_5ms.py</StartupFile>
     <SearchPath>..\..\</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -15,7 +15,7 @@
     <InterpreterArguments>
     </InterpreterArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>Hello! 79cdfe7195a507f665045ca45c398afbf6532a</CommandLineArguments>
+    <CommandLineArguments>Hello! </CommandLineArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,6 +28,9 @@
   <ItemGroup>
     <Compile Include="hmac_sha1_timing_attack.py" />
     <Compile Include="hmac_server.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hmac_sha1_timing_attack_5ms.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
